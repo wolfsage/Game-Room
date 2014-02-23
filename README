@@ -1,0 +1,10 @@
+Requires:
+
+  mop-0.01
+  perl-5.19.8
+
+perl bin/game.pl
+
+Use hjkl to move.
+
+Not much functionality right now. (Find exit of dungeon) 
