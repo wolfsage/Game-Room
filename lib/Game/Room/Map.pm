@@ -45,6 +45,7 @@ class Game::Room::Map {
 
 		my $y = 0;
 
+		# Find character starting position
 		for my $row (@grid) {
 			my $x = 0;
 
@@ -62,7 +63,11 @@ class Game::Room::Map {
 			$y++;
 		}
 
-		$!grid = \@grid;		
+		if (! defined($!cx)) {
+			Carp::croak(sprintf("Failed to load map %s: No start position marker found", $!room_file));
+		}
+
+		$!grid = \@grid;
 	}
 
 	method draw {
@@ -72,18 +77,22 @@ class Game::Room::Map {
 		for my $row (@{$!grid}) {
 			my $x = 0;
 
+			# Only draw what can be seen
 			for my $col (@$row) {
 				if ($!visible->{$x}{$y}) {
+					# Already seen by user
 					print $col;
 				} elsif ($col eq "\n") {
 					print $col;
 				} elsif ($col ne ' ' && $col ne $!character) {
+					# Within user's light radius?
 					if (abs($!cy - $y) <= $!lradius && abs($!cx - $x) <= $!lradius) {
 						print $col; $!visible->{$x}{$y} = 1;
 					} else {
 						print " ";
 					}
 				} else {
+					# Character or empty space
 					print $col;
 				}
 
@@ -158,6 +167,5 @@ class Game::Room::Map {
 		}
 	}
 }
-
 
 1;
